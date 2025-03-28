@@ -1,5 +1,6 @@
 import time
 import keyboard
+import sys
 vector = [0, -1] #inicial vector
 
 
@@ -11,7 +12,7 @@ print("welcome to snake CMD game")
 def resolution_handler(num: int) -> int:
     return num if num % 2 != 0 else num + 1
 
-def border_gene(res_x: int, res_y: int) -> str:
+def border_generator(res_x: int, res_y: int) -> str:
     screen = []
     for y in range(res_y):
         temp_list = []
@@ -29,26 +30,31 @@ def border_gene(res_x: int, res_y: int) -> str:
 
     return screen
 
+def refresh_screen ():
+    sys.stdout.write("\033c")
+    sys.stdout.flush()
+
+
 # emit vector and current position
 def get_vector(vector: list, current_x: int, current_y: int)->list:
 
     # read input and execute
     p_input = keyboard.read_event().name
     # decide resulting vector
+    # need 180 prevention <-------------------------
     if p_input == "w":
         vector = [0, -1]
-        current_y -= 1
     elif p_input == "a":
         vector = [-1, 0]
-        current_x -= 1
     elif p_input == "s":
         vector = [0, 1]
-        current_y += 1
     elif p_input == "d":
         vector = [1, 0]
-        current_x += 1
     else:
         vector = vector
+
+    current_x += vector[0]
+    current_y += vector[1]
 
     return [vector, [current_x, current_y]]
 
@@ -79,21 +85,31 @@ current_y = res_y//2
 
 while True:
     skeleton = get_vector(vector, current_y, current_x)
-    current_x, current_y = skeleton[1]
+    current_x = skeleton[1][0]
+    current_y = skeleton[1][1]
     vector = skeleton[0]
     print(current_x)
     print(current_y)
     print(vector)
 
-
+    #border limit checker --> placeholder
+    if current_x <= 0:
+        current_x = 1
+    elif current_x >= res_x - 1:
+        current_x = res_x - 2
+    if current_y <= 0:
+        current_y = 1
+    elif current_y >= res_y - 1:
+        current_y = res_y - 2
 
     snake_render = snake(vector)
-    arena = border_gene(res_x, res_y)
+    arena = border_generator(res_x, res_y)
     arena[current_y][current_x] = snake_render
     for x in arena:
         print("".join(x))
+    time.sleep(0.3)
     print("--------------------------------")
-    time.sleep(0.2)
+    refresh_screen()
 # while True:
 #     skeleton = get_vector(vector, current_y, current_x)
 #     current_x = skeleton[1][0]
