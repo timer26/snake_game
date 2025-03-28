@@ -57,9 +57,6 @@ def get_vector(vector: list, current_x: int, current_y: int)->list:
     else:
         vector = vector
 
-    current_x += vector[0]
-    current_y += vector[1]
-
     return [vector, [current_x, current_y]]
 
 
