@@ -81,6 +81,7 @@ res_x = resolution_handler(int(input("Insert width: ")))
 res_y = resolution_handler(int(input("Insert height: ")))
 current_x = res_x//2
 current_y = res_y//2
+print("for game start press any key")
 
 
 while True:
