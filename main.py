@@ -1,7 +1,9 @@
-
+import time
 import keyboard
-vector = [0, -1]
-fps = 1
+vector = [0, -1] #inicial vector
+
+
+
 
 print("welcome to snake CMD game")
 
@@ -12,61 +14,94 @@ def resolution_handler(num: int) -> int:
 def border_gene(res_x: int, res_y: int) -> str:
     screen = []
     for y in range(res_y):
-        # Generate top and bottom border
-        if y == 0 or y == res_y - 1:
-            screen.append("+" + "---" * res_x + "+")
-        # Generate side borders and playing field
-        else:
-            screen.append("|" + "   " * res_x + "|")
-    return"\n".join(screen)
+        temp_list = []
+        for x in range(res_x):
+            # Generate top and bottom border
+            if y == 0 or y == res_y - 1:
+                temp_list.append("+") if x == 0 or x == res_x - 1 else temp_list.append("---")
+            # Generate side borders
+            elif x == 0 or x == res_x - 1:
+                temp_list.append("|")
+            # Generate field
+            else:
+                temp_list.append("   ")
+        screen.append(temp_list)
 
+    return screen
 
-
-def get_vector(vector: list)->list:
+# emit vector and current position
+def get_vector(vector: list, current_x: int, current_y: int)->list:
 
     # read input and execute
     p_input = keyboard.read_event().name
     # decide resulting vector
     if p_input == "w":
-        vector = [0, 1]
+        vector = [0, -1]
+        current_y -= 1
     elif p_input == "a":
         vector = [-1, 0]
+        current_x -= 1
     elif p_input == "s":
-        vector = [0, -1]
+        vector = [0, 1]
+        current_y += 1
     elif p_input == "d":
         vector = [1, 0]
+        current_x += 1
     else:
         vector = vector
 
-    return vector
+    return [vector, [current_x, current_y]]
 
 
-def snake(res_x: int, res_y: int, vector: list)-> list:
-    snake_pos = (res_x * res_y)//2
-    blanc_canvas = border_gene(res_x,res_y)
 
+
+
+def snake(vector: list):
     snake_body_sprite = "⦾"
 
     # calculate snake head sprite
-    if vector == [0, 1]:            # looking up pressing w
-        snake_head_sprite = "▲"
+    if vector == [0, -1]:            # looking up pressing w
+        snake_head_sprite = " ▲ "
     elif vector == [-1, 0]:            # looking left pressing a
-        snake_head_sprite = "<"
-    elif vector == [0, -1]:            # looking down pressing s
-        snake_head_sprite = "▼"
+        snake_head_sprite = " < "
+    elif vector == [0, 1]:            # looking down pressing s
+        snake_head_sprite = " ▼ "
     elif vector == [1, 0]:            # looking right pressing d
-        snake_head_sprite = ">"
-    # blanc_canvas[3][3] = snake_head_sprite
-    # for x in blanc_canvas:
-    #     print(x)
-    print(snake_head_sprite)
+        snake_head_sprite = " > "
 
+    return snake_head_sprite
 
 res_x = resolution_handler(int(input("Insert width: ")))
 res_y = resolution_handler(int(input("Insert height: ")))
+current_x = res_x//2
+current_y = res_y//2
 
 
 while True:
-    print(border_gene(res_x, res_y))
-    vector = get_vector(vector)
-    snake(res_x,res_y,vector)
+    skeleton = get_vector(vector, current_y, current_x)
+    current_x, current_y = skeleton[1]
+    vector = skeleton[0]
+    print(current_x)
+    print(current_y)
+    print(vector)
+
+
+
+    snake_render = snake(vector)
+    arena = border_gene(res_x, res_y)
+    arena[current_y][current_x] = snake_render
+    for x in arena:
+        print("".join(x))
+    print("--------------------------------")
+    time.sleep(0.2)
+# while True:
+#     skeleton = get_vector(vector, current_y, current_x)
+#     current_x = skeleton[1][0]
+#     current_y = skeleton [1][1]
+#     vector = skeleton [1]
+#
+#     display = snake(res_x, res_y, currdent_x,current_y)
+#     for x in display:
+#         print("".join(x))
+#     vector = get_vector(vector)
+#     time.sleep(0.2)
